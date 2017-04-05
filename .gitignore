@@ -1,0 +1,22 @@
+# ignore some subdirectories
+/bin
+/build
+/lib
+.DS_Store
+
+__pycache__
+MonoHbb*
+
+# ignore common data file types
+*.yml
+*.yaml
+*.json
+*.txt
+*.h5
+*.tgz
+*.gz
+*.pdf
+*.png
+
+# except in the tests
+!/tests/data/*
