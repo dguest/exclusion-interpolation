@@ -42,6 +42,11 @@ class ArbAx:
         self.lims = (low, high)
         self.name = 'Theory / Expected'
         self.units = ''
+class XSecAx:
+    def __init__(self, low, high):
+        self.lims = (low, high)
+        self.name = 'Cross Section'
+        self.units = 'pb'
 
 # def get_xyz_arrays(grid_dict, key='observed'):
 #     xyz = {(i[0], i[1], p[key]) for i, p in grid_dict.items()}
@@ -56,17 +61,29 @@ def run():
     with open(args.expected) as textfile:
         grid_xsec = get_dict(textfile)
 
-    slice_points = {}
+    th_points = {}
+    ex_points = {}
     for (mz, ma), val in grid_theory.items():
         if mz == args.mz_slice:
-            slice_points[ma] = val / grid_xsec[(mz, ma)]
+            th_points[ma] = val
+            ex_points[ma] = grid_xsec[(mz, ma)]
 
-    masses, values = zip(*sorted(slice_points.items()))
-    marr, varr = np.asarray(masses), np.asarray(values)
+    masses, th_values = zip(*sorted(th_points.items()))
+    masses, ex_values = zip(*sorted(ex_points.items()))
+    marr = np.array(masses)
+    tarr = np.array(th_values)
+    earr = np.array(ex_values)
+    varr = tarr / earr
 
     mm = np.linspace(marr.min(), marr.max(), 1000)
+    def logint(vals):
+        return np.exp(np.interp(mm, marr, np.log(vals)))
     vv = np.interp(mm, marr, varr)
-    log_vv = np.exp(np.interp(mm, marr, np.log(varr)))
+    log_vv = logint(varr)
+    tt = np.interp(mm, marr, tarr)
+    log_tt = logint(tarr)
+    ee = np.interp(mm, marr, earr)
+    log_ee = logint(earr)
     odir = args.out_dir
     if not os.path.isdir(odir):
         os.mkdir(odir)
@@ -86,6 +103,15 @@ def run():
         can.ax.plot(mm, log_vv, '-', color='green', label='log')
         can.ax.axhline(1)
         can.ax.set_yscale('log')
+        can.ax.legend(framealpha=0, title=fr"$m_{{Z'}} = {mzp}$ GeV")
+
+    with Canvas(f'{odir}/slice-xsec-{mzp}{args.ext}') as can:
+        set_axes(can.ax, (axes[1], XSecAx(tt.min(), tt.max())))
+        can.ax.plot(mm, tt, '-', color='red', label='Theory')
+        can.ax.plot(mm, ee, '-', color='green', label='Expected')
+        can.ax.plot(mm, log_tt, '--', color='red', label='Theory Log')
+        can.ax.plot(mm, log_ee, '--', color='green', label='Expected Log')
+        can.ax.axhline(1)
         can.ax.legend(framealpha=0, title=fr"$m_{{Z'}} = {mzp}$ GeV")
 
 if __name__ == '__main__':

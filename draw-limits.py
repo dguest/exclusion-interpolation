@@ -91,11 +91,17 @@ def run():
         set_axes(can.ax, axes)
         can.ax.triplot(x, y, grid.simplices.copy())
 
-    with Canvas(f'{odir}/theory.pdf') as can:
+    cbx = 'Cross Section [pb]'
+    with Canvas(f'{odir}/theory{args.ext}') as can:
         zz = th_dict['lin']
-        draw2d_exclusion(can, zz, [xax, yax], log=True)
+        draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cbx)
                          # vmin=zz.min(), vmax=zz.max(), log=True)
-        can.ax.plot(x, y, 'o')
+        can.ax.plot(x, y, '.')
+    with Canvas(f'{odir}/theory-log{args.ext}') as can:
+        zz = th_dict['log']
+        draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cbx)
+                         # vmin=zz.min(), vmax=zz.max(), log=True)
+        can.ax.plot(x, y, '.')
 
     z_grids = {}
     for name, z_vals in bdict.items():
@@ -105,13 +111,13 @@ def run():
 
         if name != 'exp': continue
         with Canvas(f'{odir}/{name}{args.ext}') as can:
-            draw2d_exclusion(can, lin, [xax, yax], log=True)
+            draw2d_exclusion(can, lin, [xax, yax], log=True, cb_label=cbx)
             can.ax.plot(x, y, '.')
         with Canvas(f'{odir}/{name}-log{args.ext}') as can:
-            draw2d_exclusion(can, log, [xax, yax], log=True)
+            draw2d_exclusion(can, log, [xax, yax], log=True, cb_label=cbx)
             can.ax.plot(x, y, '.')
-        with Canvas(f'{odir}/{name}-interp{args.ext}') as can:
-            draw2d_exclusion(can, log/th_dict['log'], [xax, yax], log=True)
+        with Canvas(f'{odir}/theory-over-{name}{args.ext}') as can:
+            draw2d_exclusion(can, th_dict['log']/log, [xax, yax], log=True)
             can.ax.plot(x, y, '.')
 
     for scale in ['lin','log']:
@@ -129,7 +135,7 @@ def run():
                            linestyles=['--'])
             can.ax.plot(x, y, '.')
 
-        with Canvas(f'{odir}/obs-over-theory-{scale}{args.ext}') as can:
+        with Canvas(f'{odir}/exp-over-theory-{scale}{args.ext}') as can:
             set_axes(can.ax, axes)
             for name, var in z_grids.items():
                 style = '-' if name == 'exp' else ':'

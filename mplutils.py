@@ -47,7 +47,7 @@ class Canvas:
 _ax_size = 12
 _text_size = 12
 
-def draw2d_exclusion(can, z, axes, log=False, **kwargs):
+def draw2d_exclusion(can, z, axes, log=False, cb_label='', **kwargs):
     """
     Simple draw routine for 2d hist. Assumes an ndhist, and a
     canvas with attributes `ax` (the axes) and `fig` (the figure).
@@ -69,6 +69,8 @@ def draw2d_exclusion(can, z, axes, log=False, **kwargs):
 
     im = ax.imshow(image, **args)
     cb = fig.colorbar(im)
+    if cb_label:
+        cb.set_label(cb_label, y=0.98, ha='right')
     set_axes(ax, axes)
 
 def set_axes(ax, axes, tick_mult=0.7):
