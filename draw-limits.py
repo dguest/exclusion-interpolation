@@ -117,7 +117,14 @@ def run():
             draw2d_exclusion(can, log, [xax, yax], log=True, cb_label=cbx)
             can.ax.plot(x, y, '.')
         with Canvas(f'{odir}/theory-over-{name}{args.ext}') as can:
-            lab='Theory / Expected'
+            lab='Theory / Expected (lin interp)'
+            im, cb = draw2d_exclusion(can, th_dict['lin']/lin, [xax, yax],
+                                      log=True, cb_label=lab)
+            cs = can.ax.contour(xx, yy, th_dict['lin']/lin, [1])
+            cb.add_lines(cs)
+            can.ax.plot(x, y, '.')
+        with Canvas(f'{odir}/theory-over-{name}-log{args.ext}') as can:
+            lab='Theory / Expected (log interp)'
             im, cb = draw2d_exclusion(can, th_dict['log']/log, [xax, yax],
                                       log=True, cb_label=lab)
             cs = can.ax.contour(xx, yy, th_dict['log']/log, [1])
