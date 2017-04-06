@@ -10,6 +10,8 @@ from matplotlib.colors import LogNorm
 from matplotlib.cm import get_cmap
 from matplotlib.ticker import MultipleLocator
 
+from mpl_toolkits.axes_grid1 import make_axes_locatable
+
 import numpy as np
 
 class Canvas:
@@ -55,6 +57,10 @@ def draw2d_exclusion(can, z, axes, log=False, cb_label='', **kwargs):
     ax = can.ax
     fig = can.fig
 
+    # colorbar tweaks
+    divider = make_axes_locatable(ax)
+    cax = divider.append_axes("right", "5%", pad="1.5%")
+
     xlims, ylims = axes[0].lims, axes[1].lims
     imextent = list(xlims) + list(ylims)
     cmap = get_cmap('hot')
@@ -68,10 +74,11 @@ def draw2d_exclusion(can, z, axes, log=False, cb_label='', **kwargs):
     image = z
 
     im = ax.imshow(image, **args)
-    cb = fig.colorbar(im)
+    cb = fig.colorbar(im, cax=cax)
     if cb_label:
         cb.set_label(cb_label, y=0.98, ha='right')
     set_axes(ax, axes)
+    return im, cb
 
 def set_axes(ax, axes, tick_mult=0.7):
     mlx = MultipleLocator(100)
