@@ -158,13 +158,13 @@ def run():
 
 def _interpolate_linear(pts, z, xp, yp):
     lin = LinearNDInterpolator(pts, z)
-    interp_points = np.dstack((xp.flatten(), yp.flatten())).squeeze()
+    interp_points = np.vstack((xp.flatten(), yp.flatten())).T
     zp = lin(interp_points).reshape(xp.shape)
     return zp
 
 def _interpolate_normal(xy_grid, z, xp, yp):
     lin = LinearNDInterpolator(xy_grid, norm.ppf(z))
-    interp_points = np.dstack((xp.flatten(), yp.flatten())).squeeze()
+    interp_points = np.vstack((xp.flatten(), yp.flatten())).T
     interp_z = lin(interp_points).reshape(xp.shape)
     # avoid passing nan into the norm.cdf function
     nans = np.isnan(interp_z)
@@ -174,12 +174,12 @@ def _interpolate_normal(xy_grid, z, xp, yp):
     return zp
 
 def get_grid(x, y):
-    pts = np.dstack((x,y)).squeeze()
+    pts = np.vstack((x,y)).T
     return Delaunay(pts)
 
 def _interpolate_log(xy_grid, z, xp, yp):
     lin = LinearNDInterpolator(xy_grid, np.log(z))
-    interp_points = np.dstack((xp.flatten(), yp.flatten())).squeeze()
+    interp_points = np.vstack((xp.flatten(), yp.flatten())).T
     interp_z = lin(interp_points).reshape(xp.shape)
     return np.exp(interp_z)
 
