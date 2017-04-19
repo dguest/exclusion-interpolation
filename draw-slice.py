@@ -113,6 +113,15 @@ def run():
         can.ax.plot(mm, log_ee, '--', color='green', label='Expected Log')
         can.ax.axhline(1)
         can.ax.legend(framealpha=0, title=fr"$m_{{Z'}} = {mzp}$ GeV")
+    with Canvas(f'{odir}/slice-xsec-{mzp}-log{args.ext}') as can:
+        set_axes(can.ax, (axes[1], XSecAx(tt.min(), tt.max())))
+        can.ax.plot(mm, tt, '-', color='red', label='Theory')
+        can.ax.plot(mm, ee, '-', color='green', label='Expected')
+        can.ax.plot(mm, log_tt, '--', color='red', label='Theory Log')
+        can.ax.plot(mm, log_ee, '--', color='green', label='Expected Log')
+        can.ax.axhline(1)
+        can.ax.set_yscale('log')
+        can.ax.legend(framealpha=0, title=fr"$m_{{Z'}} = {mzp}$ GeV")
 
 if __name__ == '__main__':
     run()

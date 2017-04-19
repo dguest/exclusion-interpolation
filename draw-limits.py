@@ -116,42 +116,47 @@ def run():
         with Canvas(f'{odir}/{name}-log{args.ext}') as can:
             draw2d_exclusion(can, log, [xax, yax], log=True, cb_label=cbx)
             can.ax.plot(x, y, '.')
-        with Canvas(f'{odir}/theory-over-{name}{args.ext}') as can:
-            lab='Theory / Expected (lin interp)'
-            im, cb = draw2d_exclusion(can, th_dict['lin']/lin, [xax, yax],
-                                      log=True, cb_label=lab)
-            cs = can.ax.contour(xx, yy, th_dict['lin']/lin, [1])
+
+        ratio_lab = (r'$\frac{\mathrm{Theory} - \mathrm{Expected}}'
+                     r'{\mathrm{Theory} + \mathrm{Expected}}$')
+        with Canvas(f'{odir}/theory-minus-{name}{args.ext}') as can:
+            lab = ratio_lab + ' (lin interp)'
+            zz = (th_dict['lin'] - lin) / (th_dict['lin'] + lin)
+            im, cb = draw2d_exclusion(can, zz, [xax, yax],
+                                      log=False, cb_label=lab)
+            cs = can.ax.contour(xx, yy, th_dict['lin'] - lin, [0])
             cb.add_lines(cs)
             can.ax.plot(x, y, '.')
-        with Canvas(f'{odir}/theory-over-{name}-log{args.ext}') as can:
-            lab='Theory / Expected (log interp)'
-            im, cb = draw2d_exclusion(can, th_dict['log']/log, [xax, yax],
-                                      log=True, cb_label=lab)
-            cs = can.ax.contour(xx, yy, th_dict['log']/log, [1])
+        with Canvas(f'{odir}/theory-minus-{name}-log{args.ext}') as can:
+            lab = ratio_lab + ' (log interp)'
+            zz = (th_dict['log'] - log) / (th_dict['log'] + log)
+            im, cb = draw2d_exclusion(can, zz, [xax, yax],
+                                      log=False, cb_label=lab)
+            cs = can.ax.contour(xx, yy, th_dict['log'] - log, [0])
             cb.add_lines(cs)
             can.ax.plot(x, y, '.')
 
     for scale in ['lin','log']:
         zz_th = th_dict[scale]
 
-        lowp = z_grids['dn'][scale]/zz_th
-        highp = z_grids['up'][scale]/zz_th
-        nom = z_grids['exp'][scale]/zz_th
+        lowp = z_grids['dn'][scale] - zz_th
+        highp = z_grids['up'][scale] - zz_th
+        nom = z_grids['exp'][scale] - zz_th
         with Canvas(f'{odir}/bands-{scale}{args.ext}') as can:
             set_axes(can.ax, axes)
-            zp = np.maximum( (lowp - 1), -(highp - 1))
+            zp = np.maximum( (lowp - 0), -(highp - 0))
             can.ax.contourf(xx, yy, zp, [-1, 0],
                             colors=['lime'], zorder=0)
-            can.ax.contour(xx, yy, nom, [1], colors=['k'],
+            can.ax.contour(xx, yy, nom, [0], colors=['k'],
                            linestyles=['--'])
             can.ax.plot(x, y, '.')
 
-        with Canvas(f'{odir}/exp-over-theory-{scale}{args.ext}') as can:
+        with Canvas(f'{odir}/exp-minus-theory-{scale}{args.ext}') as can:
             set_axes(can.ax, axes)
             for name, var in z_grids.items():
                 style = '-' if name == 'exp' else ':'
-                zz = var[scale]/zz_th
-                can.ax.contour(xx, yy, zz, [1], colors=['k'],
+                zz = var[scale] - zz_th
+                can.ax.contour(xx, yy, zz, [0], colors=['k'],
                                linestyles=[style])
                 can.ax.plot(x, y, '.')
 
