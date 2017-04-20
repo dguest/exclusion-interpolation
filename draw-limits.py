@@ -10,7 +10,7 @@ import numpy as np
 import os
 
 from scipy import interpolate
-from scipy.interpolate import LinearNDInterpolator
+from scipy.interpolate import LinearNDInterpolator, CloughTocher2DInterpolator
 from scipy.stats import norm
 from scipy.spatial import Delaunay
 
@@ -164,7 +164,7 @@ def run():
 
 
 def _interpolate_linear(pts, z, xp, yp):
-    lin = LinearNDInterpolator(pts, z)
+    lin = CloughTocher2DInterpolator(pts, z)
     interp_points = np.vstack((xp.flatten(), yp.flatten())).T
     zp = lin(interp_points).reshape(xp.shape)
     return zp
