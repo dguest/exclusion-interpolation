@@ -7,6 +7,7 @@ Draw exclusions from a text file
 from argparse import ArgumentParser
 from mplutils import Canvas, set_axes, helvetify
 import numpy as np
+from scipy.interpolate import interp1d
 import os
 
 def get_dict(textfile):
@@ -23,6 +24,7 @@ def get_args():
     parser.add_argument('-z', '--mz-slice', type=int, default=1200, nargs='?')
     parser.add_argument('-e', '--ext', default='.pdf')
     parser.add_argument('-o', '--out-dir', default='plots')
+    parser.add_argument('-s', '--do-splines', action='store_true')
     return parser.parse_args()
 
 def get_axes():
@@ -78,12 +80,16 @@ def run():
     mm = np.linspace(marr.min(), marr.max(), 1000)
     def logint(vals):
         return np.exp(np.interp(mm, marr, np.log(vals)))
+    def spl_int(vals):
+        return interp1d(marr, vals, kind='quadratic')(mm)
     vv = np.interp(mm, marr, varr)
     log_vv = logint(varr)
     tt = np.interp(mm, marr, tarr)
     log_tt = logint(tarr)
+    spl_tt = spl_int(tarr)
     ee = np.interp(mm, marr, earr)
     log_ee = logint(earr)
+    spl_ee = spl_int(earr)
     odir = args.out_dir
     if not os.path.isdir(odir):
         os.mkdir(odir)
@@ -111,6 +117,9 @@ def run():
         can.ax.plot(mm, ee, '-', color='green', label='Expected')
         can.ax.plot(mm, log_tt, '--', color='red', label='Theory Log')
         can.ax.plot(mm, log_ee, '--', color='green', label='Expected Log')
+        if args.do_splines:
+            can.ax.plot(mm, spl_tt, ':', color='red', label='Theory Spl')
+            can.ax.plot(mm, spl_ee, ':', color='green', label='Expected Spl')
         can.ax.axhline(1)
         can.ax.legend(framealpha=0, title=fr"$m_{{Z'}} = {mzp}$ GeV")
     with Canvas(f'{odir}/slice-xsec-{mzp}-log{args.ext}') as can:
@@ -119,6 +128,9 @@ def run():
         can.ax.plot(mm, ee, '-', color='green', label='Expected')
         can.ax.plot(mm, log_tt, '--', color='red', label='Theory Log')
         can.ax.plot(mm, log_ee, '--', color='green', label='Expected Log')
+        if args.do_splines:
+            can.ax.plot(mm, spl_tt, ':', color='red', label='Theory Spl')
+            can.ax.plot(mm, spl_ee, ':', color='green', label='Expected Spl')
         can.ax.axhline(1)
         can.ax.set_yscale('log')
         can.ax.legend(framealpha=0, title=fr"$m_{{Z'}} = {mzp}$ GeV")

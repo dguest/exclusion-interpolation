@@ -92,14 +92,15 @@ def run():
         can.ax.triplot(x, y, grid.simplices.copy())
 
     cbx = 'Cross Section [pb]'
+    cb_th = cbx + ' (theory)'
     with Canvas(f'{odir}/theory{args.ext}') as can:
         zz = th_dict['lin']
-        draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cbx)
+        draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cb_th)
                          # vmin=zz.min(), vmax=zz.max(), log=True)
         can.ax.plot(x, y, '.')
     with Canvas(f'{odir}/theory-log{args.ext}') as can:
         zz = th_dict['log']
-        draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cbx)
+        draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cb_th)
                          # vmin=zz.min(), vmax=zz.max(), log=True)
         can.ax.plot(x, y, '.')
 
@@ -110,11 +111,12 @@ def run():
         z_grids[name] = {'lin': lin, 'log': log}
 
         if name != 'exp': continue
+        cb_exp = cbx + ' (expected)'
         with Canvas(f'{odir}/{name}{args.ext}') as can:
-            draw2d_exclusion(can, lin, [xax, yax], log=True, cb_label=cbx)
+            draw2d_exclusion(can, lin, [xax, yax], log=True, cb_label=cb_exp)
             can.ax.plot(x, y, '.')
         with Canvas(f'{odir}/{name}-log{args.ext}') as can:
-            draw2d_exclusion(can, log, [xax, yax], log=True, cb_label=cbx)
+            draw2d_exclusion(can, log, [xax, yax], log=True, cb_label=cb_exp)
             can.ax.plot(x, y, '.')
 
         ratio_lab = (r'$\frac{\mathrm{Theory} - \mathrm{Expected}}'
