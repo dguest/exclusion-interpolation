@@ -41,6 +41,7 @@ def get_args():
     parser.add_argument('ex_d1')
     parser.add_argument('-e', '--ext', default='.pdf')
     parser.add_argument('-o', '--out-dir', default='plots')
+    parser.add_argument('--hbb-br', nargs='?', default=0.571)
     return parser.parse_args()
 
 def get_axes():
@@ -64,7 +65,8 @@ def run():
     helvetify()
     with open(args.theory) as textfile:
         grid_theory = get_xsec_dict(textfile)
-    x, y, z = get_xyz_arrays(grid_theory, 'xsec')
+    x, y, z_all = get_xyz_arrays(grid_theory, 'xsec')
+    z = z_all * args.hbb_br
     bdict = {}
     bands = [('exp', args.expected),
              ('up', args.ex_u1),

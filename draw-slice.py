@@ -25,6 +25,7 @@ def get_args():
     parser.add_argument('-e', '--ext', default='.pdf')
     parser.add_argument('-o', '--out-dir', default='plots')
     parser.add_argument('-s', '--do-splines', action='store_true')
+    parser.add_argument('--hbb-br', nargs='?', default=0.571)
     return parser.parse_args()
 
 def get_axes():
@@ -73,7 +74,7 @@ def run():
     masses, th_values = zip(*sorted(th_points.items()))
     masses, ex_values = zip(*sorted(ex_points.items()))
     marr = np.array(masses)
-    tarr = np.array(th_values)
+    tarr = np.array(th_values) * args.hbb_br
     earr = np.array(ex_values)
     varr = tarr / earr
 
