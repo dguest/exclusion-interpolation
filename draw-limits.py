@@ -8,6 +8,7 @@ from argparse import ArgumentParser
 from mplutils import Canvas, draw2d_exclusion, set_axes, helvetify
 import numpy as np
 import os
+from warnings import filterwarnings
 
 from scipy import interpolate
 from scipy.interpolate import LinearNDInterpolator
@@ -61,6 +62,7 @@ def get_xyz_arrays(grid_dict, key='observed'):
 
 def run():
     args = get_args()
+    filterwarnings('error')
     helvetify()
     with open(args.theory) as textfile:
         grid_theory = get_xsec_dict(textfile)
@@ -96,12 +98,10 @@ def run():
     with Canvas(f'{odir}/theory{args.ext}') as can:
         zz = th_dict['lin']
         draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cb_th)
-                         # vmin=zz.min(), vmax=zz.max(), log=True)
         can.ax.plot(x, y, '.')
     with Canvas(f'{odir}/theory-log{args.ext}') as can:
         zz = th_dict['log']
         draw2d_exclusion(can, zz, [xax, yax], log=True, cb_label=cb_th)
-                         # vmin=zz.min(), vmax=zz.max(), log=True)
         can.ax.plot(x, y, '.')
 
     z_grids = {}
