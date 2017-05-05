@@ -181,7 +181,8 @@ def _interpolate_normal(xy_grid, z, xp, yp):
     return zp
 
 def get_grid(x, y):
-    pts = np.vstack((x - 1e-9*y,y)).T
+    skew = 1e-9
+    pts = np.vstack((x - skew*y,y)).T
     return Delaunay(pts)
 
 def _interpolate_log(xy_grid, z, xp, yp):

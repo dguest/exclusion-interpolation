@@ -49,7 +49,7 @@ class Canvas:
 _ax_size = 12
 _text_size = 12
 
-def draw2d_exclusion(can, z, axes, log=False, cb_label='', **kwargs):
+def draw2d_exclusion(can, z_orig, axes, log=False, cb_label='', **kwargs):
     """
     Simple draw routine for 2d hist. Assumes an ndhist, and a
     canvas with attributes `ax` (the axes) and `fig` (the figure).
@@ -72,8 +72,10 @@ def draw2d_exclusion(can, z, axes, log=False, cb_label='', **kwargs):
         args['norm'] = LogNorm()
 
     # set NaN values outside the normal range to prevent warnings
+    z = z_orig.copy()
     vmin, vmax = np.nanmin(z), np.nanmax(z)
-    z[np.isnan(z)] = vmin - 0.1*(vmax - vmin)
+    z[np.isnan(z)] = vmin - 0.5*(vmax - vmin)
+    cmap.set_under((0,0,0,0))
 
     im = ax.imshow(z, vmin=vmin, vmax=vmax, **args)
     cb = fig.colorbar(im, cax=cax)
