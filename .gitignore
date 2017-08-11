@@ -20,3 +20,6 @@ MonoHbb*
 
 # except in the tests
 !/tests/data/*
+
+# add some other things back
+!.zenodo.json
