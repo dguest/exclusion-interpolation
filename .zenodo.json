@@ -4,5 +4,12 @@
             "name": "Daniel Hay Guest",
             "affiliation": "Vermont"
         }
+    ],
+    "related_identifiers": [
+        {
+            "scheme": "url",
+            "identifier": "https://github.com/dguest/exclusion-interpolation/",
+            "relation": "isPreviousVersionOf"
+        }
     ]
 }
